@@ -19,7 +19,7 @@ var request = require('sync-request');
 var fs = require('fs');
 
 var date = (new Date())
-date = date.getDate()+"-"+date.getMonth()+"-"+date.getFullYear()
+date = date.getDate()+"-"+ (date.getMonth()+1) + "-"+date.getFullYear()
 
 if ( fs.existsSync(appngrunfile) ) {
 	console.log("\nALERT:\n" +
