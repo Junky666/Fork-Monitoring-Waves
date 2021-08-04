@@ -20,6 +20,40 @@
  *
 /* =====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES===WAVES====WAVES====
 
+
+Version 4.1.3
+---------------
+- date 4 aug 2021
+
+- Added some Q/A's to FAQ chapter
+
+- Changed textual output in wavesleasingreport.html from node name to service name
+
+- FIXES
+  - masstx validation of transactions failed.
+    
+    Cause:
+    node.js module sync-request did not honor web port used in the GET request.  
+    It always used port 80, allthough another port was configured in "querynode_api"
+
+    solved: migrated away from sync-request to module axios
+
+- ROADMAP
+  - Migrate deferred library 'request' to a new library
+  - incorporate airdrop tool
+  - Release docker container version of WavesLPOSdistributer
+  - Developing WLDaaS
+  - Add manual option 'signing' of failed mass transaction which is not send within the 
+    expiry interval (currently 12 mins)
+
+- File changes (+ added, - removed, * updated)
+  * masstx.js
+  * package.json
+  * CHANGELOG.txt
+  * README.md
+
+
+
 Version 4.1.2
 ---------------
 - date 11 Jul 2021

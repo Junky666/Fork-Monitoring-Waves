@@ -1,4 +1,4 @@
-# WavesLPoSDistributer          v4.1.2
+# WavesLPoSDistributer          v4.1.3
 A revenue distribution tool for Waves nodes and the leasers
 
 Welcome to Plukkies version of the LPoSdistribution script, 'the lazy' version.
@@ -709,7 +709,52 @@ node airdrop_leasers.js
 ```
 
 ## FAQ
-- This list will be filled with Questions and answers soon
+- Q: I get this 'throw error' when I run 'node masstx' or 'node appng'. How to fix that?
+
+     internal/modules/cjs/loader.js:638
+         throw err;
+         ^
+
+     Error: Cannot find module 'axios' or 'readline-sync' or 'sync-request'
+
+  A: It means the code has been updated with new modules and they have not neen installed.
+     Fix it by running : npm install <module> where module is the reported name that is missing.
+
+- Q: If I update to a new version of WavesLPOSDistributer, do I need to overwrite all files?\
+
+  A: No. Just look in the CHANGESLOG.txt what files have been changed. You can safely update  
+     only these files.
+
+- Q: CHANGELOG.txt mentions that config.json has been changed in the new release.  
+     What do I need to do to use the new config file?
+
+  A: You have three options to use the new config file;
+     1. Keep backup of your current config.json. Use the new one and copy your values to the new file
+     2. Pay attention in CHANGELOG.txt what keys have been added. Add them yourself in your config.json
+
+- Q: All my pay transactions failed for whatever reason. I want to resend with masstx again. What to do?
+
+  A: Add the batch number that failed into payqueue.dat. I.e. for batch 5, payqueue.dat should look like: [5]
+     Next: 'mv paymentsDone/wavesleaserpayouts5.* .'
+     Verify with ./start_checker if the expected payments are as expected.
+     execute payment: 'node masstx'
+
+- Q: One of my subtransactions from a larger masstransfer failed. What to do?
+
+  A: Pay attention to the failed transaction and note the <batch>-<subid>
+     The payment processor saved the signed JSON data to:
+     - paymentsDone/masstx-signed-<batch>-<subid>.json, i.e. for batch 5-2, the
+       signed file will be 'paymentsDone/masstx-signed-5-2.json'
+
+     move file: 'mv paymentsDone/masstx-signed-5-2.json .'
+     start the payment: node masstx masstx-signed-5-2.json'
+     
+     This will resend the specific masstx transaction that failed.
+
+     NOTE
+     Be sure to resend within 12 mins else the node will reject based on the timedstamp. 
+
 
 ## Disclaimer
-Please always test your resulting payment scripts, e.g., with the _checkPaymentsFile.js_ script!
+Please always test your resulting payment scripts, e.g., with the 'start_checker' script!
+

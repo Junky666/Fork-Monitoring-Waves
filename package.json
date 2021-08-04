@@ -16,6 +16,7 @@
   "dependencies": {
     "readline-sync": "^1.4.10",
     "request": "^2.81.0",
-    "sync-request": "^4.0.2"
+    "sync-request": "^4.0.2",
+    "axios": "^0.21.1"
   }
 }

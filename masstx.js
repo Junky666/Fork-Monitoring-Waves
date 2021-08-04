@@ -3,6 +3,7 @@ var fs = require('fs');
 var request = require('request');
 var syncrequest = require('sync-request');
 
+const axios = require('axios');
 const readline = require('readline');
 const readlinesync = require('readline-sync');
 const configfile = 'config.json'
@@ -33,6 +34,8 @@ if (fs.existsSync(configfile)) { //configurationfile is found, let's read conten
         var payoutfilesprefix = toolconfigdata['payoutfilesprefix']
 	var socialmediafile = toolconfigdata['socialmediafile']
 	var nodename = paymentconfigdata['nodename']
+	var servicename = paymentconfigdata['servicename']
+
 
 	//define all api uris
 	var txinfoprefix = apiuridata['txinfo']
@@ -137,7 +140,7 @@ function socialmediamessage( cb ) {
 		text += "\n" + item
 	})
 
-	text +=	"\n\nThank you all for leasing to node " + nodename + "!" +
+	text +=	"\n\nThank you all for leasing to " + servicename + "!" +
 		"\n\n" + mydate + " - Enjoy the payday!" +
 		"\n"
 
@@ -742,6 +745,24 @@ var doPayment = function(payments, counter, batchid, nrofmasstransfers) {
 						//POST broadcast request for a masstransfer
 						promise_signed_masstxs.then (function (signed_data) { //Signed txs object received, now broadcast and validate
 
+							if ( signed_data.error ) { //signing fails, alert and quit
+
+								let msg1 = '\n ' + nodename + ' Alert!\n --------------------\n  Failed Transaction signing.\n'
+                                        
+								let msg2 = '\n REASON: ' + signed_data.message + '\n'
+
+                                        			console.log(msg1,msg2)
+
+                                        			if (telegramconfig.tg === 'yes') {
+
+                                                			tg(msg1+msg2) //send message request to telegram
+									console.log('\n Send Telegram message.\n')
+                                        		
+								}
+
+								process.exit();
+							}
+
 							console.log('  Received signed transaction, id "' + signed_data.id + '"')
 						  	masstransactionpayment = signed_data
 
@@ -797,22 +818,8 @@ var doPayment = function(payments, counter, batchid, nrofmasstransfers) {
 } //End var doPayment
 
 
-/* Method that requests api call and gets JSON body returned
- * args:
- * - node : http://ip:port of host
- * - uri : additional uri to query
- * return JSON body
- */
-function get_api_syncrequest (node, uri) {
 
-	let url = node+uri
-	let respons = syncrequest ( 'GET', url, { json: true } )
-
-	return JSON.parse(respons.body)
-}
-
-
-/* Method that requests api call and POST JSONd
+/* Method that requests api call and POST JSON data
  * args:
  * - node : http://ip:port of host
  * - uri : additional uri to query
@@ -830,7 +837,8 @@ function post_api_syncrequest (node, uri, jsonbody) {
 
 /* Method that validates if the masspayments are succesfully fullfilled
  * arguments:
- * - obj: array with all transaction id's that needs to be validated
+ * - txid: transaction ID present in array that needs to be validated
+ * - count: array counter
  *
  * if a transactions failed, send telegram message
  * The index counter of forEach loop is used to detect end
@@ -849,25 +857,32 @@ function validate_pay_transactions (txid, count) {
 		if (count === Object.keys(txdata).length) { console.log() } //Add whiteline if end of array
 
 		setTimeout ( function (batchid) {
-			let txsrespons = get_api_syncrequest ( readnode, txinfoprefix + txid)
 
-			if (txsrespons.error) { //Transaction FAILED
+			let fullurl = readnode + txinfoprefix + txid
 
-				let msg1 = nodename + ' Alert!\n--------------------\nA masstransfer failed.\n'
-				let msg2 = '\n ALERT !:\n Transaction "' + txid + '" FAILED, batch ' + batchid + '-' + subbatch + '.\n The signed JSON data is reserved in file : "' + signedfile + '"' +
-					   '\n To retransmit the failed transaction, start masstx as follows: "node masstx ' + signedfile + '"' +
-					   '\n Resend it witin 12 mins else it is stale!'
+			axios.get ( fullurl ).
+				then ( function (res) { //Succesfull validation for transaction
+					console.log(' Transaction ' + txid + ' was SUCCESFULL.')
+				}).
+				catch ( function (err) { //Unsuccesfull validation for transaction
+
+					let msg1 = nodename + ' Alert!\n--------------------\nA masstransfer failed.\n'
+					let msg2 = '\n ALERT !:' +
+						   '\n Transaction "' + txid + '" FAILED, batch ' + batchid + '-' + subbatch + '.' +
+						   '\n The signed JSON data is reserved in file : "' + signedfile + '"' +
+					   	   '\n To retransmit the failed transaction, start masstx as follows: "node masstx ' + signedfile + '"' +
+					   	   '\n Resend it witin 12 mins else it is stale!\n' +
+						   '\n error id: ' + err.response.data.error +
+						   '\n error message: ' + err.response.data.message
 				
-				console.log(msg2)
+					console.log(msg2)
 
-				if (telegramconfig.tg === 'yes') {
+					if (telegramconfig.tg === 'yes') {
 
-					tg(msg1+msg2) //send message request to telegram
-				}
+						tg(msg1+msg2) //send message request to telegram
+					}
 
-			} else { //Transaction SUCCESS
-				console.log(' Transaction ' + txid + ' was SUCCESFULL.')
-			}
+			}) //End axios.get
 
 			if (count === Object.keys(txdata).length) { console.log(endmessage) } //Show app end message when reached end of txs id array
 
