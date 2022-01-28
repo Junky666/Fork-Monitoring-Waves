@@ -1,3 +1,13 @@
+# NOTE
+# This Code is NOT maintained anymore. The new LPOS distributer  
+# is migrated to a Cloud Service, called WLDaaS.
+- location : https://dv9lcw5bcm72z.cloudfront.net/
+- github sources : https://github.com/plukkie/WLDaaS  
+*************************************************************************
+#
+#
+#
+ 
 # WavesLPoSDistributer          v4.1.3
 A revenue distribution tool for Waves nodes and the leasers
 
