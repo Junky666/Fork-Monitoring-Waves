@@ -1,22 +1,34 @@
-# THIS PACKAGE IS REPLACED BY THE CLOUD SERVICE WLDaaS
-# WHAT is WLDaaS?
-WLDaaS is Waves LPOS distributer as a Service. The scripts are migrated to a Cloud native application.
-It can be operated from a GUI or via API. What does it offer?
-- Instant access to collect and pay your leasing distribution
-- Pay with Waveskeeper or via API
-- Get a default HTML report
-- Get a self service package to integrate the data in your personal report
-- Auto continue your previous session
-- Autodetect your first leaser block 
-- Have your data stored in the cloud
-- Get a JSON package for your masstransfer to easily escape from WLDaaS if you don't like it.
+# WavesLPoSDistributer          v4.1.3
+A revenue distribution tool for Waves nodes and the leasers
 
-All build cloud native in the AWS platform !  
-You can access WLDaaS instant here: https://dv9lcw5bcm72z.cloudfront.net/index.html
+Welcome to Plukkies version of the LPoSdistribution script, 'the lazy' version.
+This version enhances the ease of use and creates a 'one stop touch' for the user.
+It also creates extra logging and usefull screen output and has integration with
+Cloud Providers.
+The payout jobs are nicely queued now and don't have to be executed instantly anymore
+after the collector session has been executed.
 
-![image](https://user-images.githubusercontent.com/44134205/151437552-a0681f2b-4bca-4001-9c8e-df4d2d99a8e9.png)
+Use this version if you like stuff that is automated for you! :-)
+This version delivers tools, that work for you! A one stop visit to manage your
+payouts and the be aware of script faults and block inconsistencies. Get telegram
+alerts and store reports in the Cloud!
 
-Donations are welcome if you like the Cloud version of WLDaaS;
+- Collect mining fees (start_collector.sh)
+- Check collection results (start_checker.sh)
+- Optimize multiple collector sessions (txoptimizer.py)
+- Execute your payout transactions (node ./masstx.js)
+- Store your payreports to AWS or Private server
+- Send messaging and alerting to telegram
+- Discover peering nodes that can be used for fork detection (openapinodes.py)
+- Execute forktesting (forktester.py --help more info)
+- Collect usefull info about your node and leasers with nodeinfo.py tool
+
+See CHANGELOG.txt for latest release notes!
+
+
+Many thanks to original version of Marc Jansen and the fork of W0utje!
+
+Donations are welcome if you like this version of the script: 'The lazy' version
   - you can DONATE Waves to;
     - alias '**donatewaves@plukkie**'
     - address '**3PKQKCw6DdqCvuVgKtZMhNtwzf2aTZygPu6**'
@@ -25,98 +37,67 @@ Donations are welcome if you like the Cloud version of WLDaaS;
     - address '**3P7ajba4wWLXq6t1G8VaoaVqbUb1dDp8fm4**'
 
 
-~~# WavesLPoSDistributer          v4.1.3
-A revenue distribution tool for Waves nodes and the leasers
-Welcome to Plukkies version of the LPoSdistribution script, 'the lazy' version.
-This version enhances the ease of use and creates a 'one stop touch' for the user.
-It also creates extra logging and usefull screen output and has integration with
-Cloud Providers.
-The payout jobs are nicely queued now and don't have to be executed instantly anymore
-after the collector session has been executed.
-
-~~Use this version if you like stuff that is automated for you! :-)
-This version delivers tools, that work for you! A one stop visit to manage your
-payouts and the be aware of script faults and block inconsistencies. Get telegram
-alerts and store reports in the Cloud!
-
-~~- Collect mining fees (start_collector.sh)
-~~- Check collection results (start_checker.sh)
-~~- Optimize multiple collector sessions (txoptimizer.py)
-~~- Execute your payout transactions (node ./masstx.js)
-~~- Store your payreports to AWS or Private server
-~~- Send messaging and alerting to telegram
-~~- Discover peering nodes that can be used for fork detection (openapinodes.py)
-~~- Execute forktesting (forktester.py --help more info)
-~~- Collect usefull info about your node and leasers with nodeinfo.py tool
-
-~~See CHANGELOG.txt for latest release notes!
-
-
-~~Many thanks to original version of Marc Jansen and the fork of W0utje!
-
-
-
-~~## Installation steps: prerequisits
+## Installation steps: prerequisits
 First of all, you need to install Node.js (https://nodejs.org/en/) and npm.
 This version is succesfully tested with versions;
-~~- node v10.12.0 (allthough lower should work probably)
-~~- npm 6.4.1 (allthough lower should work probably)
-~~- tested on Ubuntu 14.0 with kernel 4.4.0-116-generic (allthough of minor importance)
-~~- get the latest version from github: git clone https://github.com/plukkie/WavesLPoSDistributer.git
+ - node v10.12.0 (allthough lower should work probably)
+ - npm 6.4.1 (allthough lower should work probably)
+ - tested on Ubuntu 14.0 with kernel 4.4.0-116-generic (allthough of minor importance)
+ - get the latest version from github: git clone https://github.com/plukkie/WavesLPoSDistributer.git
 
-~~To install node.js and npm, do following steps;
-~- add repository: curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
-~- install both packages: sudo apt-get install -y nodejs
+To install node.js and npm, do following steps;
+ - add repository: curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+ - install both packages: sudo apt-get install -y nodejs
 
-~~In release 2.2 a new tool 'txoptimizer.py' was added. This need python3.
+In release 2.2 a new tool 'txoptimizer.py' was added. This need python3.
 It has been succesfully tested with python 3.6.8 on Ubuntu.
 To install python3 on ubuntu: apt install python3.
 
-~~Release 2.3 has integrations with Amazon AWS S3 buckets.\
+Release 2.3 has integrations with Amazon AWS S3 buckets.\
 Install the aws sdk -> npm install aws-sdk from within your WavesLPOSdistributer folder.
 You also need to have an Aws account and have the API access credentials installed on your
 machine where you run this WavesLPOSDistributer.
 
-~~NOTE
+NOTE
 This is only needed if you want to store your html reports on S3!\
 See configfile explanation in chapter ## Installation steps: first time users\
 for more info how to set it up.
 
-~~You can now proceed with the actual scripts installation and configuration.
+You can now proceed with the actual scripts installation and configuration.
 Read on with one of the following steps which apply to your setup;
- ~~- Installation steps: first time users
- ~~- Installation steps: users that already use a previous version of **Plukkies** script
- ~~- Installation steps: users that already use one of the original versions of the script (other then Plukkies version)
+ - Installation steps: first time users
+ - Installation steps: users that already use a previous version of **Plukkies** script
+ - Installation steps: users that already use one of the original versions of the script (other then Plukkies version)
 
-~~## Installation steps: first time users
+## Installation steps: first time users
 These steps are for users that do not use an older version of the LPoSdistributer package yet.
-~1. CD into the LPoS package directory : WavesLPoSDistributer
-~2. install the package independencies:
-sh
+1. CD into the LPoS package directory : WavesLPoSDistributer
+2. install the package independencies:
+```sh
 mkdir node_modules
 npm install
-
-~~3. EDIT settings in the configuration file 'config.json'.
-  ~~The default file looks like this;
-sh
-~~{
-"paymentconfig" : {
+```
+3. EDIT settings in the configuration file 'config.json'.
+   The default file looks like this;
+```sh
+{
+  "paymentconfig" : {
     "paymentnode_api" : "http://localhost:6869",
-    "paymentnode_apikey" : "<<~your api key here>>",     ~~<-- ~~mandatory value (also remove << and >> chars) 
-"querynode_api" : "http://localhost:6869",
+    "paymentnode_apikey" : "<<your api key here>>",      <-- mandatory value (also remove << and >> chars) 
+    "querynode_api" : "http://localhost:6869",
     "query_pause" : "0",
-    "nodename" : "<~your node name>",
+    "nodename" : "<your node name>",
     "servicename" : "Your Waves Brand Name",
     "feedistributionpercentage" : "90",
     "blockrewarddistributionpercentage" : "80",
     "mrtperblock" : "0",
-    "leasewallet" : "<<~your leasewallet here>>",      <-- mandatory value (also remove << and >> chars)
+    "leasewallet" : "<<your leasewallet here>>",      <-- mandatory value (also remove << and >> chars)
     "transactionattachment" : "NK2oQJzq7sjCvh7AjJcLjLT9Ax",
     "firstleaserblock" : "1370000",
     "paystartblock" : "1370000",
     "blockwindowsize" : "5000",
     "nopayoutaddresses" : [ ],
-    "mail" : "<<~your email address>>",                 <-- optional value (also remove << and >> chars)
+    "mail" : "<<your email address>>",                 <-- optional value (also remove << and >> chars)
     "payreports" : {                                   <-- optional
 			"provider" : "",
 			"destination" : "",
@@ -178,57 +159,57 @@ sh
      "leaseinfo" : "transactions/info/"
    }
 }
-
-~~The values marked with statement "<-- mandatory" need to be filled out,
+```
+The values marked with statement "<-- mandatory" need to be filled out,
 so almost all values can be left untouched as you can see, only 2 to be changed.
 Make sure you remove the << and >> characters of the value fields!
 
-~~Here's a clarification of all key/value pairs;
+Here's a clarification of all key/value pairs;
 
-~~**paymentconfig**   (This part is for payment data)
-
- ~~- "paymentnode_api"
+**paymentconfig**   (This part is for payment data)
+```
+ - "paymentnode_api"
    This is the node on which you will execute your payment transactions (your forging node)
  
- ~~- "paymentnode_apikey"
+ - "paymentnode_apikey"
    The API password of your forging node. Put it as PLAINTEXT in the config.json file!
    Else the payments will fail.
 
-   ~~NOTE
+   NOTE
    This is the same password you need to use in the configfile of your Waves forging node,
    but needs to be coded as base58 string in the node config file.
    
-   ~~WARNING
+   WARNING
    keep it safe and confidential to you. With the key you can POST transactions!
    For security reasons, remove 'rwx' worldrights from config.json : chmod o-rwx config.json
  
- ~~- "querynode_api"
+ - "querynode_api"
    This is the node (name or ip address) and tcp port of the API server where you run your queries to.
    If you run the LPOSdistributer scripts on your forging node itself, this will be the default (localhost).
    If you run the script on another host, then you use the external ip address of your forging node here.
  
- ~~- "query_pause"
+ - "query_pause"
    How many seconds to wait between queries. Some tools, are looping through API queries. 
    If you make use of external nodes, instead of your localhost, you can offload the massive 
    queries qwith a pause.
  
- ~~- "nodename"
+ - "nodename"
    This is a textual name identifying your node. It's just a description used in some logging
 
- ~~- "servicename"
+ - "servicename"
    This is a descriptive name of your Waves brand. It shows up in some reports.
  
- ~~- "feedistributionpercentage"
+ - "feedistributionpercentage"
    How many percent of the transaction fees in your forged blocks, are you willing to share with
    your leasers. You can also go above 100%, but then it will cost you more then you earn!
    A reasonable value could be 90%, so it means you keep 10% for the effort and cost of the node ownership.
 
- ~~- "blockrewarddistributionpercentage"
+ - "blockrewarddistributionpercentage"
    How many percent of the blockrewards are you willing to share with your leasers.
    Every block has a fixed reward for the miner. At date this is 6 waves.
    If you do not want to share this, put 0.
  
- ~~- "mrtperblock"
+ - "mrtperblock"
    This feature is depricated. There are no Mrt rewards anymore since feature 14 is activated!
    Waves blockchain has a reward in Mrt tokens for every block your node forged. This value determines
    how many Mrt tokens per block are you willing to share with your leasers.
@@ -236,15 +217,15 @@ Make sure you remove the << and >> characters of the value fields!
    waves pays to you per block, which is ~9 Mrt if you want to pay some to your leasers.
    default: 0
  
- ~~- "leasewallet"
+ - "leasewallet"
    This is the address of your leasewallet, i.e. "3P7ajba2wWLXq5x1G8VaoaVqbUb1dDp1fm2".
    Your leasers need to lease to this this wallet address.
  
- ~~- "transactionattachment"
+ - "transactionattachment"
    Put here a base58 encoded message (the default is: "thanks for leasing!")
    You can encode your message on an online encoder website.
  
- ~~- "firstleaserblock"
+ - "firstleaserblock"
    If you already use a previous version of Plukkieforger's WavesLPOSdistributer, then you can leave
    it to the default. No need to change!
    Put here the block where your first leaser started his lease to you. You can reveal that by
@@ -258,7 +239,7 @@ Make sure you remove the << and >> characters of the value fields!
    start and stop blocks for every session. This 'lazy' version of the tool all takes care of it
    for you :-)
  
- ~~- "paystartblock"
+ - "paystartblock"
    If you already use a previous version of Plukkieforger's WavesLPOSdistributer, then you can leave
    it to the default. No need to change!
    Put here the first block from which you take into consideration payments. You can just leave it
@@ -266,47 +247,47 @@ Make sure you remove the << and >> characters of the value fields!
    You would only need to change it if you already did some payments and want to skip those to avoid
    duplicate payments.
  
- ~~- "blockwindowsize"
+ - "blockwindowsize"
    How many blocks to scan for every subsequent collector session. Put if different, for every
    collector session it will scan X amount of blocks. ~Every one minute a block is written
    to the Waves blockchain. So, if you want to run a batch every two weeks, you would set the
    this value to 14x24x60 = 20160 blocks. If you want to do 12 collections per year, set it to 43800.
    
-   ~~NOTE
+   NOTE
    If you want to change this parameter later, that's just fine. Keep in mind that after you
    changed it, the next collector session will still use the old value, because of the
    batchinfo.json file which keeps the settings for the upcoming collector. Every subsequent
    sessions will use the new blockwindowsize value.
  
- ~~- "nopayoutaddresses"
+ - "nopayoutaddresses"
    Put here wallet addresses that you want to exclude from payments. Default it's empty, so
    everyone get's payouts. The usecase is that maybe someone grants you a huge lease and does not
    expect you to share revenues with him. It could be because you won a contest. Below example
    shows two addresses that do not get revenue share;
 
-   ~~[ "3P6CwqcnK1wyW5TLzD15n79KbAsqAjQWXYZ",
+   [ "3P6CwqcnK1wyW5TLzD15n79KbAsqAjQWXYZ",
      "3P6CanmcnK1wyW5TLzbny55KbAsqAjQWMNO" ]
  
- ~~- "mail"
+ - "mail"
    Put here optionally your email address. It will be used in an HTML file which is created
    which shows the leasing stats. You can share this with your leasers and so they know how
    to contact you.
    
- ~~- "payreports" : {
-          "provider" : "<~local> or <~aws>",
-			    "destination" : "<~name of folder> or <name of an aws s3 bucket>",
-			    "region" : "<~aws region>",
-			    "requesturlprefix" : "<~wb url prefix of your report destination>"
+ - "payreports" : {
+          "provider" : "<local> or <aws>",
+			    "destination" : "<name of folder> or <name of an aws s3 bucket>",
+			    "region" : "<aws region>",
+			    "requesturlprefix" : "<wb url prefix of your report destination>"
           
-   ~~This feature will upload your html report, after masstx.js did the payments. The providers
+   This feature will upload your html report, after masstx.js did the payments. The providers
    can be a a local folder or an s3 bucket on Amazon AWS.
-   ~1. Option local folder:
+   1. Option local folder:
       - provider -> "local"
-      - destination -> "<~path to your destination folder>" , like "/var/home/htdocs/"
+      - destination -> "<path to your destination folder>" , like "/var/home/htdocs/"
         NOTE: folder should be there and writable.
       - region -> not used for local, leave blank
       - requesturlprefix -> url for your consumers, i.e. "https://yourdomain.nl/reports/"
-   ~2. Option Cloud Provider AWS:
+   2. Option Cloud Provider AWS:
       - provider -> "AWS"
       - destination -> "s3 bucket name" , like "wavesleasingreports"
         NOTE: bucket should be there
@@ -314,102 +295,102 @@ Make sure you remove the << and >> characters of the value fields!
       - requesturlprefix -> url for your consumers. If leave blank (""), you see the
         complete Aws 3s path with report name on screen.
   
-  ~~- "socialmedia" : {  SEE descriptions at "payreports"
+  - "socialmedia" : {  SEE descriptions at "payreports"
 	"provider" : "",
 	"destination" : "",
 	"region" : ""
 	}
- 
-~~**toolbaseconfig**  (This part is for application behaviour and core values)
-
- ~~- "batchinfofile"
+ ```
+**toolbaseconfig**  (This part is for application behaviour and core values)
+```
+ - "batchinfofile"
    This file keeps a record of the start and stop block and the batchId of the upcoming
    collector session. When a sessions starts, a backup is created of this filename
    with the extension .bak
  
- ~~- "payqueuefile"
+ - "payqueuefile"
    This file keeps a record of the pending payment jobs.
  
- ~~- "payoutfilesprefix"
+ - "payoutfilesprefix"
    This string is prefixed for all the files that are created when a collector and a payment
    job has finished. It's combined with the batchID.
  
- ~~- "paymentsdonedir"
+ - "paymentsdonedir"
    This is used as archival directory to store data files.
  
- ~~- "txbasefee"
+ - "txbasefee"
    This is the Waves transaction fee for one single transaction and the basefee for
    a masstransaction.
  
- ~~- "masstransferpertxfee"
+ - "masstransferpertxfee"
    This is the extra Waves transaction fee for one sub-transaction in a masstransaction.
  
- ~~- "maxmasstransfertxs"
+ - "maxmasstransfertxs"
    This is the maximum number of sub-transactions that fit in one masstransaction.
  
- ~~- "transactiontimeout"
+ - "transactiontimeout"
    How much msecs to wait after a POST transaction to the blockchain.
    1000 means 1 second delay.
  
- ~~- "transactionapisuffix"
+ - "transactionapisuffix"
    This is the Uri complement for a single transaction (type 4 transaction)
 
- ~~- "masstxapisuffix"
+ - "masstxapisuffix"
    This is the Uri complement for a masstransaction (type 11 transaction)
  
- ~~- "masstransferversion"
+ - "masstransferversion"
    Version 1, not used yet.
  
- ~~- "relevantassets"
+ - "relevantassets"
    Which assets you actually will payout to your leasers. If you would remove 'Mrt',
    then collector sessions and dry payment checks would pretent as if 'Mrt' is
    included. However, the actual payment tool would not execute transactions for it.
  
- ~~- "optimizerdir"
+ - "optimizerdir"
    The folder where 'txoptimizer' runs are archived for backup and reference purpose.
 
- ~~- "validationdelay"
+ - "validationdelay"
    How many msecs to wait before the validation is executed after pay transactions.
    If this is set to low, the transactions are concluded as failed.
 
-
-~~**forktoolsconfig**  (This part is for the forktesting tool)
-
- ~~- "controlnodes" (list)
+```
+**forktoolsconfig**  (This part is for the forktesting tool)
+```
+ - "controlnodes" (list)
    List of controlnodes used by forktester.py. Status should be up or down.
    Down nodes will not be used. Example: { "http://anode.blockchain.net:6869" : "up",
 					   "http://10.20.30.40:80" : "up" },
 
- ~~- "auto_rollback" (yes/no)
+ - "auto_rollback" (yes/no)
    This defines if your node automatically executes a rollback if it detects fork.
    Becarefull! Forktester can send alerts of a forked is detected and you have more
    control to rollback manually. Forks do normally not happen often. Default "no".
-
-~~**telegramconfig**  (This part has all the telegram details)
-
- ~~- "use" (yes/no)
+```
+**telegramconfig**  (This part has all the telegram details)
+```
+ - "use" (yes/no)
    Activate telegram usage if alerts are raised by tools.
 
- ~~- All other JSON keys for telegram
+ - All other JSON keys for telegram
    Create an account on telegram and fill out all details in config.json
-
-~~**API uri config**  (This has api uris to request info from the Node API server)
-
- ~~- All uris specified here, are requested by the tool nodeinfo.py
+```
+**API uri config**  (This has api uris to request info from the Node API server)
+```
+ - All uris specified here, are requested by the tool nodeinfo.py
    For the do it yourself people, you can add extra urls here for your
-   convenience. The uris are added in JSON to the variable datadict[key] = <~json repsons>
+   convenience. The uris are added in JSON to the variable datadict[key] = <json repsons>
+```
 
-
-~~WARNING
+WARNING
 Keep the config.json file confidential!
 Remove the attributes 'rwx' worldrights from config.json :
-~
+```sh
 chmod o-rwx config.json
+```
 
+Now you are done with the configuration, you can proceed with chapter "Running the collector sessions".
 
-~~Now you are done with the configuration, you can proceed with chapter "Running the collector sessions".
-
-~~## Installation steps: users that already use a previous version of **Plukkies** script
+## Installation steps: users that already use a previous version of **Plukkies** script
 Just look into the **CHANGELOG.txt** file and replace the modified files and copy the new files
 from the the new downloaded version to your current/old version.
 If you use a version that does not have the config.json file yet (it was added in 2.0), then
@@ -417,90 +398,92 @@ you should also configure settings in there. Please see chapter "Installation st
 where the configuration file and all settings are explained in detail.
 Latest config.json version for 3.2 has added options, so please replace/add config options if upgrading.
 
-~~## Installation steps: users that already use one of the original versions of the script (other then Plukkies version)
+## Installation steps: users that already use one of the original versions of the script (other then Plukkies version)
 If you use other version of the script, like from Marc jansen or w0utje, it's easy migration;
 
-~~1. Finish up your last collector and payment session 
-~2. Rename directory of your current version to 'WavesLPoSDistributer.old'. We call this the OLD version.
-~3. If correct, the NEW version directory is called 'WavesLPoSDistributer'
+1. Finish up your last collector and payment session 
+2. Rename directory of your current version to 'WavesLPoSDistributer.old'. We call this the OLD version.
+3. If correct, the NEW version directory is called 'WavesLPoSDistributer'
    CD into the OLD version dir and copy following files to the NEW version dir;
 
-  ~~- LastBlockLeasers.json
-   ~- The last leaserpayout info file, which looks like following;
+   - LastBlockLeasers.json
+   - The last leaserpayout info file, which looks like following;
      1250000_3P7vmba4wWLXq6t1G8VaoaVqbUb1dDp8gj4.json
 
-   ~~This name represents the "stopblock_" from the last session + the wallet address of your node
-~4. Now CD into the NEW version directory
-~5. EDIT the config.json file (i.e with nano or vim)
+     This name represents the "stopblock_" from the last session + the wallet address of your node
+4. Now CD into the NEW version directory
+5. EDIT the config.json file (i.e with nano or vim)
    Look for the following key/value pairs and change as mentioned;
-~```sh
+```sh
    "firstleaserblock" : "1370000",  <== Put here the block where the first active leaser registered
    "paystartblock" : "1370000",     <== Put here the "stopblock_" from step 3.
-~```
-~6. Adopt all other settings from your OLD script to the config.json file.
+```
+6. Adopt all other settings from your OLD script to the config.json file.
    Please see chapter "Installation steps: first time users, point 3" where all settings
    are explained in detail.
 
-~~## Summary steps using the tool after installation
-~- run a collector session: ./start_collector.sh
-~- run checker: ./start_checker.sh
-~- pay: node masstx
+## Summary steps using the tool after installation
+- run a collector session: ./start_collector.sh
+- run checker: ./start_checker.sh
+- pay: node masstx
 
-~~f you want to run multiple collector sessions before you do a payment:
-~- run as many collector sessions you want: ./start_collector.sh
-~- when satisfied about all your collections, run checker: ./start_checker.sh
-~- run optimizer: ./txoptimizer.py
-~- execute your payment: node masstx
+If you want to run multiple collector sessions before you do a payment:
+- run as many collector sessions you want: ./start_collector.sh
+- when satisfied about all your collections, run checker: ./start_checker.sh
+- run optimizer: ./txoptimizer.py
+- execute your payment: node masstx
 
-~~Optional:
+Optional:
 Use additional tools forktester.py and openapinodes.py to ensure reliable
 blockchain sync status and fork detection if you like.
 
-~~## Running the collector sessions
+## Running the collector sessions
 After a successful configuration of the tool, start with:
-~```sh
+```sh
 node appng.js OR start_collector.sh
+
 NOTE1  
 collector started with argument 'now' or '/now' will force collection  
 if the current blockheight of the blockchain is < requested endblock (paystopblock).
 If not add the /now switch, it will exit and report when the stop block is available.
-~```
-~NOTE2  
+```
+NOTE2  
 If you can't start 'start_collector', check if the script has execute 'x' on it.
 If not add with: ```chmod u+x start_collector.sh```
+
 NOTE3  
 With smaller collector batches, you get multiple pending payments in the payment queue.
 These multiple payments jobs can be merged by running the 'txoptimizer.py' tool.
 Txoptimizer.py seeks for duplicate recipient addresses and merges all pending payment 
 jobs into one larger job. 
 
-~~NOTE4  
+NOTE4  
 To run the collector tool every night @1 AM, edit /etc/crontab and put in following line;
-~```sh
+```sh
 00 01 * * * root cd /home/myuser/WavesLPoSDistributer/ && ./start_collector.sh
-~```
+```
 After the tool ran, it finishes up by writing the actual payments to be done into the file
 which is configured in the script by:
-~```sh
+```sh
 "payoutfilesprefix" : "wavesleaserpayouts" 
-~```
+```
 The name is constructed together with the paymentid (or batchID) of every batch session.
 So, for the first run, the following three files will be created;
-~- wavesleaserpayouts1.json
-~- wavesleaserpayouts1.html
-~- wavesleaserpayouts1.log
+- wavesleaserpayouts1.json
+- wavesleaserpayouts1.html
+- wavesleaserpayouts1.log
 
-~~The batchID is added to the payqueue.dat file. When there are already pending payments, it's just added.
+The batchID is added to the payqueue.dat file. When there are already pending payments, it's just added.
 For the next session, the batchid is incremented by 1 and the batchdata.json file is updated
 with the new blockheights and batchID.
 
-~~## Checking pending payments
+## Checking pending payments
 After the collector ran (or ran multiple times as you wish), you can check the payments that are stored
 in the payment queue. The script for checking is checkPaymentsFile.js. After you configured some
 settings (see above), you can start with;
-~```sh
+```sh
 node checkPaymentsFile.js or ./start_checker
-~```
+```
 The script reads all all batchIDs from the payqueue.dat file and the corresponding leaser files that were
 constructed by the collector tool. It does only checking, nothing else. The results for all pending payments
 are printed on the screen.
@@ -511,7 +494,7 @@ See more about both payment possibilities in next chapter (doing the payments).
 After checking this information, you have a good overview what tokens and the amounts are planned for payout
 and which transaction type is best to use!
 
-~~## Optimizing multiple pending payments
+## Optimizing multiple pending payments
 If you execute multiple collector sessions before you will do a payment to your leasers, you will
 have a payment queue with multiple pending payment jobs. This would mean multiple transactions, often to the
 same leasing recipients.
@@ -520,16 +503,16 @@ data files and will merge the data of all jobs in one new job. Fees for one and 
 added up. This way the number of transactions are minimized. This saves on transfer cost and storage in the
 blockchain.
 
-~~## Doing the payments
+## Doing the payments
 
-~~NOTE
+NOTE
 You can readon here about the two different payment tools and how they work. However,
 advise is to always use 'masstx.js' to do payments.
 
-~~For the actual payout, you can choose the masstx.js tool or the massPayment.js tool. They can be started with:
-~```sh
+For the actual payout, you can choose the masstx.js tool or the massPayment.js tool. They can be started with:
+```sh
 node masstx.js or node massPayment.js 
-~```
+```
 The massPayment.js tool does a single transaction for every payment to be done.
 The masstx.js tool makes use of masstransfers and pushes multiple payments for one one and the same asset
 into one masstransfer transaction. This optimizes blockchain storage and and transaction costs.
@@ -539,45 +522,45 @@ All batchIDs are sequencially read from the payment queue and the transactions a
 When a job finishes, the batchID is removed from the payqueue.dat and the three wavesleaserpayoutX.* files
 are moved to the archival directory (default paymentsDone/).
 
-~~NOTE masstx.js
+NOTE masstx.js
 If there is a failed transaction of a masstransaction, make note of the batch and sub-id of the transaction.
 Then you can resend it with command : node masstx <masstx-signed-X-Y.json, where X is batch and Y sub-job.
 See CHANGELOG.txt for more details.
 
-~~NOTE massPayment.js <<<< Better use masstx for payments.
+NOTE massPayment.js <<<< Better use masstx for payments.
 If there would be a crash of the system, script or other transaction breaking interruption,
 make note of the last succesfull transaction counter and the batchID. Then edit the massPayment.js
 file and change these values for:
-~```sh
+```sh
 const crashconfig = {
         batchidstart: '0',		<== batchID here
         transactionstart: '0' }		<== last succesfull transaction +1
-~```
+```
 Then start the 'node massPayment.js'.
 The values you can leave as is or you can put it back to 0 / 0 if you like.
 
-~~## Why three seperate tools?
+## Why three seperate tools?
 We decided to use seperate tools since this allows for additional tests of the payments before the payments are actually executed.
 On the other hand, it does not provide any drawback since both scripts could also be called directly one after the other with:
-~```sh
+```sh
 node appng.js && node masstx.js or ./start_collector && node massPayment.js
-~```
+```
 However, it is strongly recommended to check the payments before the actual payments are done.
 So what you could do for example, run from crontab;
-~- run the collector session every saterday evening
-~- run the checkPaymentFile every sunday, mail the output, so you have visibility
-~- run the txoptimizer, mail the output, so you have visibility
-~- run the massPayment job every tuesday
+- run the collector session every saterday evening
+- run the checkPaymentFile every sunday, mail the output, so you have visibility
+- run the txoptimizer, mail the output, so you have visibility
+- run the massPayment job every tuesday
 
-~~With this scheme, you have a nice automated schema and works as follows;
-~- Every wednesday & saterday, if the collector batchsize is still too large (because the mainnet blockheight is to low),
+With this scheme, you have a nice automated schema and works as follows;
+- Every wednesday & saterday, if the collector batchsize is still too large (because the mainnet blockheight is to low),
   the cronjob exits and waits till next collector day. If the blockrange fits, the payments are collected and
   the job is logged and queued
-~- Every Sunday, the checkPayment job checks the payqueue. If empty, it exits. If there is (are) job(s) in the queue,
+- Every Sunday, the checkPayment job checks the payqueue. If empty, it exits. If there is (are) job(s) in the queue,
   the paymentdata for all batchIDs are shown and your output was send by email. You have time to check the results
-~- Every tuesday, the payment is done for all batchIDs in the queue.
+- Every tuesday, the payment is done for all batchIDs in the queue.
 
-~~NOTE
+NOTE
 It safe to schedule the collector and check jobs. However, regarding payments,
 it's always possible that something disrupts the transaction process, in which payments
 could fail and leasers don't receive payments. It's up to you, if you feel confident
@@ -586,17 +569,17 @@ MassPayment has forseen in the event that crashes or failed transactions (due to
 by which you can add the batchID and the number of the last succesfull transactionnr.+1, to the file
 and then start massPayment.js again. Transactions will be executed from where the failures started.
 
-~~If you use masstx.js, chances of crashing are much less, cause the tool bundles lots of sub-transactions
+If you use masstx.js, chances of crashing are much less, cause the tool bundles lots of sub-transactions
 in one actual transaction. So, when doing full automation of the payouts too, it's unlikely that that crashes
 occur. Cause if you have 100 leasers, you would only have 1 actual transaction which takes 1 second.
 
-~~The nice thing is that the three tools are decoupled. So, if you run the collector three times a week
+The nice thing is that the three tools are decoupled. So, if you run the collector three times a week
 and the the checks every week and the payout just once a month or whenever you feel it's a good moment,
 that's all fine. It also depends on the frequency of blockhits for your node and the blockwindows size
 you configure. It's all up to you and it doesn't bite one another.
 
 
-~~## Monitoring forks (forktester.py)
+## Monitoring forks (forktester.py)
 Forktester can be used to manage if your node is on fork.
 It uses controlnodes which are used to compare block headers between your node and the control nodes.
 Forktester requests 5 blocks (counting from lastblock-2) and compares these blocks between your node
@@ -605,20 +588,20 @@ Forktester integrates alerting via Telegram. If problems are found (like a fork)
 to your telegram account. Rollback can be activated also via forktester. This can be done manually
 or automatically (option "auto_rollback" : "yes").
 
-~~WARNING
+WARNING
 Use config option "auto_rollback" : "yes" (default "no") with precaution!
 Alerting that a fork happened, can be a false positive. It's better to first use forktester for
 some time without the automatic rollback function turned to "yes" and do some manual investigation
 if an alert is send about a possible fork. If you concluded that a fork indeed happened on your
-node, there is a forkfile created with the name "forked.<~block>". If you start forktester and
+node, there is a forkfile created with the name "forked.<block>". If you start forktester and
 a forkfile is found it reports on the action you can do to execute rollback or to remove the
 forkfile if it is a false positive.
 
-~~Forktester uses settings from config.json.
+Forktester uses settings from config.json.
 For best fork control, execute forktester.py periodically from a job sceduler, like crontab.
 For more help, execute : forktester.py --help
 
-~~## Discovering open API nodes (openapinodes.py)
+## Discovering open API nodes (openapinodes.py)
 This tool will try for all your connected peer nodes, if they have a reachable API server.
 The purpose of openapinodes.py script is to reveal nodes which can be used by the forktester.py
 script. Open nodes can be added to the config.json file. The openapinode tool is an optional
@@ -630,24 +613,24 @@ from Forktester that control nodes are often out of sync with your node. If cont
 that are used by forktester, give problems, forktester will report on that in the logs and
 also in telegram if you activate it in the config.json.
 
-~~## Query node info (nodeinfo.py)
+## Query node info (nodeinfo.py)
 This tool show interessting data about your node and about your leasers.
 I.e list of leasers, current block, block with first active leaser, node version etc.
 Just run 'nodeinfo.py' or 'nodeinfo.py help'
 
-~~## A fully automated LPOS cycle
+## A fully automated LPOS cycle
 Below example is a fully automated LPOS cycle, which I use myself on a Linux sysem.
 It logs the cronjob tasks, with data and time added. It automatically collects,
 does pending payment validation, merges with Txoptimizer and then execute payment.
 Everything is logged in home 'folder ~/log/'. These are the scheduled tasks;
-~- collect every night 45mins after 23.00 the forged block stats with appng.js (start_collector.sh)
-~- checks pending payments 5 minutes BEFORE txoptimizer kicks off (for validation in case of doubts or problems)
-~- merge all pending jobs first day of month @01.00 at night with txoptimizer.py
-~- checks pending payments 5 minutes AFTER txoptimizer kicks off
-~- execute payment first day of the month @13.00 in the afternoon (node masstx)
+- collect every night 45mins after 23.00 the forged block stats with appng.js (start_collector.sh)
+- checks pending payments 5 minutes BEFORE txoptimizer kicks off (for validation in case of doubts or problems)
+- merge all pending jobs first day of month @01.00 at night with txoptimizer.py
+- checks pending payments 5 minutes AFTER txoptimizer kicks off
+- execute payment first day of the month @13.00 in the afternoon (node masstx)
 
-~~The forktester will check every 10 mins if a fork happended.
-~```
+The forktester will check every 10 mins if a fork happended.
+```
 # m h  dom mon dow   command
 # m h  dom mon dow   command
 45 23 * * * cd /home/wavesuser/WavesLPoSDistributer/ && ./start_collector.sh > ~/log/start_collector.sh-`date +\%d-\%m-\%Y_\%T`.log 2>&1
@@ -655,27 +638,28 @@ Everything is logged in home 'folder ~/log/'. These are the scheduled tasks;
 00 01 1 * * cd /home/wavesuser/WavesLPoSDistributer/ && ./txoptimizer.py > ~/log/txoptimizer.py-`date +\%d-\%m-\%Y_\%T`.log 2>&1
 05 01 1 * * cd /home/wavesuser/WavesLPoSDistributer/ && ./start_checker.sh > ~/log/start_checker.sh-`date +\%d-\%m-\%Y_\%T`.log 2>&1
 0  13 1 * * cd /home/wavesuser/WavesLPoSDistributer/ && node masstx.js > ~/log/masstx.js-`date +\%d-\%m-\%Y_\%T`.log 2>&1
+
 # Waves blockchain forktester
 */10 * * * * cd /home/wavesuser/WavesLPoSDistributer/ && ./forktester.py >> ~/log/forktester.py-`date +\%m-\%Y`.log 2>&1
 
-~```
-~~With this setup, everything is done automatically and there's a good archive for logging.
+```
+With this setup, everything is done automatically and there's a good archive for logging.
 
-~~## Airdrops
+## Airdrops
 Payments for airdrops could be calculated by using the _airdrop.js_ script. Configuration works pretty much the same way as for the other scripts:
-~```sh
+```sh
 /**
-~ * Put your settings here:
-~ *     - address: the address of your node that you want to distribute from
-~ *     - block: the block for which you want to calculate your richlist
-~ *     - total: amount of supply for the reference asset
-~ *     - amountToDistribute: amount of tokens that you want to distribute (have decimals in mind here...)
-~ *     - assetId: id of the reference asset
-~ *     - assetToDistributeId: id of the asset you want to airdrop
-~ *     - filename: name of the file the payments are written to
-~ *     - node: address of your node in the form http://<ip>:<port
-~ *     - excludeList: a list of addresses that should not receive the airdrop, e.g., exchanges...
-~ */
+ * Put your settings here:
+ *     - address: the address of your node that you want to distribute from
+ *     - block: the block for which you want to calculate your richlist
+ *     - total: amount of supply for the reference asset
+ *     - amountToDistribute: amount of tokens that you want to distribute (have decimals in mind here...)
+ *     - assetId: id of the reference asset
+ *     - assetToDistributeId: id of the asset you want to airdrop
+ *     - filename: name of the file the payments are written to
+ *     - node: address of your node in the form http://<ip>:<port
+ *     - excludeList: a list of addresses that should not receive the airdrop, e.g., exchanges...
+ */
 var config = {
     address: '',
     block: 500859,
@@ -686,27 +670,27 @@ var config = {
     node: '',
     excludeList: []
 };
-~```
+```
 Afterwards, the script could be started with:
-~```sh
+```sh
 node airdrop.js
-~```
+```
 
-~~Payments for airdrops to leasers could be calculated by using the _airdrop_leasers.js_ script. Configuration works pretty much the same way as for the other scripts:
-~```sh
+Payments for airdrops to leasers could be calculated by using the _airdrop_leasers.js_ script. Configuration works pretty much the same way as for the other scripts:
+```sh
 /**
-~ * Put your settings here:
-~ *     - address: the address of your node that you want to distribute from
-~ *     - total: amount of supply for the reference asset
-~ *     - amountToDistribute: amount of tokens that you want to distribute (have decimals in mind here...)
-~ *     - isStatic: boolean to select on which the sending amount is bases, true/false 
-~ *     			* true: every address receives amountToDistribute
-~ *     			* false: every address receives his percentage of amountToDistribute based on leased waves    
-~ *     - assetToDistributeId: id of the asset you want to airdrop
-~ *     - filename: name of the file the payments are written to
-~ *     - leasers: name of the file which contains the active leasers info, generated by app.js (LastBlockLeasers.json)
-~ *     - excludeList: a list of addresses that should not receive the airdrop, e.g., exchanges...
-~ */
+ * Put your settings here:
+ *     - address: the address of your node that you want to distribute from
+ *     - total: amount of supply for the reference asset
+ *     - amountToDistribute: amount of tokens that you want to distribute (have decimals in mind here...)
+ *     - isStatic: boolean to select on which the sending amount is bases, true/false 
+ *     			* true: every address receives amountToDistribute
+ *     			* false: every address receives his percentage of amountToDistribute based on leased waves    
+ *     - assetToDistributeId: id of the asset you want to airdrop
+ *     - filename: name of the file the payments are written to
+ *     - leasers: name of the file which contains the active leasers info, generated by app.js (LastBlockLeasers.json)
+ *     - excludeList: a list of addresses that should not receive the airdrop, e.g., exchanges...
+ */
 var config = {
     address: '3PEFQiFMLm1gTVjPdfCErG8mTHRcH2ATaWa',
     amountToDistribute: 1,
@@ -716,61 +700,60 @@ var config = {
     isStatic: true,
     excludeList: ["3P31zvGdh6ai6JK6zZ18TjYzJsa1B83YPoj"] //Bittrex
 };
-~```
+```
 This example will generate the paymentfile airdrop_leasers.json for sending 1 BearWaves to every leaser in the LastBlockLeasers.json file.
 
-~~Afterwards, the script could be started with:
-~```sh
+Afterwards, the script could be started with:
+```sh
 node airdrop_leasers.js
-~```
+```
 
-~~## FAQ
-~- Q: I get this 'throw error' when I run 'node masstx' or 'node appng'. How to fix that?
+## FAQ
+- Q: I get this 'throw error' when I run 'node masstx' or 'node appng'. How to fix that?
 
-   ~~internal/modules/cjs/loader.js:638
+     internal/modules/cjs/loader.js:638
          throw err;
          ^
-~
+
      Error: Cannot find module 'axios' or 'readline-sync' or 'sync-request'
 
-  ~~A: It means the code has been updated with new modules and they have not neen installed.
-     Fix it by running : npm install <~module> where module is the reported name that is missing.
-	
-~~- Q: If I update to a new version of WavesLPOSDistributer, do I need to overwrite all files?\
+  A: It means the code has been updated with new modules and they have not neen installed.
+     Fix it by running : npm install <module> where module is the reported name that is missing.
 
-  ~~A: No. Just look in the CHANGESLOG.txt what files have been changed. You can safely update  
+- Q: If I update to a new version of WavesLPOSDistributer, do I need to overwrite all files?\
+
+  A: No. Just look in the CHANGESLOG.txt what files have been changed. You can safely update  
      only these files.
 
-~~- Q: CHANGELOG.txt mentions that config.json has been changed in the new release.  
+- Q: CHANGELOG.txt mentions that config.json has been changed in the new release.  
      What do I need to do to use the new config file?
 
-  ~~A: You have three options to use the new config file;
+  A: You have three options to use the new config file;
      1. Keep backup of your current config.json. Use the new one and copy your values to the new file
      2. Pay attention in CHANGELOG.txt what keys have been added. Add them yourself in your config.json
 
-~~- Q: All my pay transactions failed for whatever reason. I want to resend with masstx again. What to do?
+- Q: All my pay transactions failed for whatever reason. I want to resend with masstx again. What to do?
 
-  ~~A: Add the batch number that failed into payqueue.dat. I.e. for batch 5, payqueue.dat should look like: [5]
+  A: Add the batch number that failed into payqueue.dat. I.e. for batch 5, payqueue.dat should look like: [5]
      Next: 'mv paymentsDone/wavesleaserpayouts5.* .'
      Verify with ./start_checker if the expected payments are as expected.
      execute payment: 'node masstx'
 
-~~- Q: One of my subtransactions from a larger masstransfer failed. What to do?
+- Q: One of my subtransactions from a larger masstransfer failed. What to do?
 
-  ~~A: Pay attention to the failed transaction and note the <~batch>-<~subid>
+  A: Pay attention to the failed transaction and note the <batch>-<subid>
      The payment processor saved the signed JSON data to:
-     - paymentsDone/masstx-signed-<~batch>-<s~ubid>.json, i.e. for batch 5-2, the
+     - paymentsDone/masstx-signed-<batch>-<subid>.json, i.e. for batch 5-2, the
        signed file will be 'paymentsDone/masstx-signed-5-2.json'
-~
+
      move file: 'mv paymentsDone/masstx-signed-5-2.json .'
      start the payment: node masstx masstx-signed-5-2.json'
- ~    
+     
      This will resend the specific masstx transaction that failed.
-~
+
      NOTE
      Be sure to resend within 12 mins else the node will reject based on the timedstamp. 
 
 
 ## Disclaimer
-WLDaaS can not be held responsible for incorrect outcomes. The collector code is available in this repo and can be auditted. 
-
+Please always test your resulting payment scripts, e.g., with the 'start_checker' script!
