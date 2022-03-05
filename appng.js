@@ -2,7 +2,7 @@
 // Some comments
 // Transaction type  8 : Lease
 // Transaction type  9 : LeaseCancel
-// Transaction type 16 : Invoke script
+// Transaction type 16 : Invoke script [2650000]
 //                       - stateChanges
 //                         - leases
 //                         - leaseCancels
