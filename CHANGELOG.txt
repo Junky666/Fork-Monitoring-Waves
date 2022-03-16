@@ -20,6 +20,42 @@
  *
 /* =====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES====WAVES===WAVES====WAVES====
 
+Version 4.1.4
+---------------
+- date 16 march 2022
+
+- NEW FEATURES
+  - Added support for one asset of choice to be payed by masstx.js tool
+    The asset can be added to the wavesleaserpayoutX.json file as below example;
+    
+    [
+    	{
+        	"amount": 1000000,
+        	"fee": 100000,
+        	"assetId": "Atqv59EYzjFGuitKVnMRk6H8FukjoV3ktPorbEys25on",
+        	"sender": "3P7ajba4wWLXq6t1G8VaoaVqbUb1dDp8nm9",
+        	"attachment": "USkz6M7kM8X2vR89LHm48WnUK3YdBWV55W4RJ92y8jbV1XviPSzbTCdXWxtx",
+        	"recipient": "3P1zdekqXGZ5zokGroupT42L6jV7t9ixBNM",
+		"pay" : "yes"
+    	}
+    ]
+    
+    This feature was requested and funded by [WavesFunnnyNode](https://wavesfunnynode.com/).
+    Allthough this code was not maintained anymore, I decided to help out and I implemented 
+    the feature. They also want the change to be merged into the master branch. 
+    
+    NOTE
+    Allthough masstx.js uses the asset that is configured in config.json, you need to 
+    deliver yourself on the wavesleaserpayoutsX.json file with the amounts for the recipients. 
+    There was no need for WavesFunnyNode to have it added to appng.js tool, to have the 
+    assetid amounts automatically added.
+
+- File changes (+ added, - removed, * updated)
+  * masstx.js
+  * config.json
+  * CHANGELOG.txt
+  * README.md
+
 
 Version 4.1.3
 ---------------

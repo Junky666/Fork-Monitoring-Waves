@@ -8,7 +8,7 @@
 #
 #
  
-# WavesLPoSDistributer          v4.1.3
+# WavesLPoSDistributer          v4.1.4
 A revenue distribution tool for Waves nodes and the leasers
 
 Welcome to Plukkies version of the LPoSdistribution script, 'the lazy' version.
@@ -134,7 +134,8 @@ npm install
     "transactionapisuffix" : "/assets/transfer",
     "masstxapisuffix" : "/assets/masstransfer",
     "masstransferversion" : "1",
-    "relevantassets" : [ "Waves", "Mrt" ],
+    "relevantassets" : [ "Waves" ],
+    "token" : { "name" : "", "id" : "", "decimals" : "" },
     "optimizerdir" : "txoptimizer",
     "validationdelay" : "5000"
   },
@@ -352,9 +353,12 @@ Here's a clarification of all key/value pairs;
    Version 1, not used yet.
  
  - "relevantassets"
-   Which assets you actually will payout to your leasers. If you would remove 'Mrt',
-   then collector sessions and dry payment checks would pretent as if 'Mrt' is
-   included. However, the actual payment tool would not execute transactions for it.
+   Which assets you actually will payout to your leasers. Besides "Waves". 
+   you can add 1 token asset, i.e. "usdn" which can be payed to your leasers.
+   
+ - "token" : { "name" : "", "id" : "", "decimals" : "" }
+   The name should correspond to the name you used in "relevantassets".  
+   "id" is the assetid and "decimals" how many decimals belong to the asset. 
  
  - "optimizerdir"
    The folder where 'txoptimizer' runs are archived for backup and reference purpose.

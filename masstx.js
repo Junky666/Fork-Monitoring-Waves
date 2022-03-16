@@ -456,6 +456,7 @@ function collectlogfileitems(readfile) {
 */
 function getpayqueue (myfunction) {
 
+	const tokenname = toolconfigdata.token.name
 	var payqueuearray = JSON.parse(fs.readFileSync(paymentqueuefile));
 	jobs = payqueuearray.length
 	var backuppayqueue = fs.writeFileSync(paymentqueuefile+".bak",fs.readFileSync(paymentqueuefile))	//Create backup of queuefile
@@ -476,7 +477,7 @@ function getpayqueue (myfunction) {
 
 		batchpaymentarray = JSON.parse(fs.readFileSync(payoutfilename),toString())	//All transaction details current batch
 		var wavestransactions = 0
-		var mrttransactions = 0
+		var tokentransactions = 0
 		var transactioncount = parseInt(batchpaymentarray.length)	//how many transactions current batch		
 		//var nrofmasstransfers //How many masstransfers needed for all payments
 		var txdelay	//total time needed for all masstransfers in current batch
@@ -493,11 +494,11 @@ function getpayqueue (myfunction) {
 
 			if (payout == 'yes') {
                 		if ( !asset.assetId ) { wavestransactions++ }
-				else if ( asset.assetId && coins.includes('Mrt') ) { mrttransactions++ }
+				else if ( asset.assetId && coins.includes(tokenname) ) { tokentransactions++ }
 			}
 		})
 
-		nrofmasstransfers = Math.ceil(wavestransactions/maxmasstransfertxs) + Math.ceil(mrttransactions/maxmasstransfertxs)
+		nrofmasstransfers = Math.ceil(wavestransactions/maxmasstransfertxs) + Math.ceil(tokentransactions/maxmasstransfertxs)
 		txdelay = nrofmasstransfers*transactiontimeout
 		timeoutarray[index+1] = timeoutarray[index] + txdelay
 
@@ -643,7 +644,7 @@ var start = function(jsonarray, queueid, nrofmasstransfers) {
 var doPayment = function(payments, counter, batchid, nrofmasstransfers) {
 
 	var masstxsdone = 0 //counter to detect when all masstransfers are done for one payment batch
-	var payment = {} //Payment object with all transactions for Waves and Mrt
+	var payment = {} //Payment object with all transactions for Waves and token
 	var masstxarray //array with all transactions for 1 masstransfer
         var masstxpayment = {} //JSON object used for actual payment POST
 	var decimalpts //how many decimals for a token
@@ -679,8 +680,8 @@ var doPayment = function(payments, counter, batchid, nrofmasstransfers) {
 				var masstransfercounterup = 0
 				var logmessage
 
-				if ( asset == 'Waves' ) { decimalpts = 8 } else if ( asset == 'Mrt' ) { decimalpts = 2 }
- 				if ( asset !== 'Waves' ) { var assetId = payment["Common"][asset + "assetId"] }
+				if ( asset == 'Waves' ) { decimalpts = 8 } else { decimalpts = parseInt(toolconfigdata.token.decimals) }
+ 				if ( asset !== 'Waves' ) { var assetId = payment["Common"]["tokenId"] }
 
 				var masstransactionsign = {  "type" : 11,
 							     "sender" : payment.Common.sender,
@@ -815,6 +816,7 @@ var doPayment = function(payments, counter, batchid, nrofmasstransfers) {
 			}, delayarray[index]) //End function actions for an Asset
 		} //End if ( asset in payment )
 	}) //End loop coins.forEach
+
 } //End var doPayment
 
 
@@ -929,21 +931,22 @@ function promise_broadcast_masstransaction ( batchid, masstransfercounterup, ass
 
 
 
-/* This var will create the masstransferarray for Waves and Mrt
+/* This var will create the masstransferarray for Waves and token
  * @param paymentarray: the array with all lease recipients with amounts
  * @param cb: the array transfers is returned to the caller
 */
 var masstransferobject = function (paymentarray, cb) {
 	var transfers = {}
 	var waves = 'Waves'
-	var mrt = 'Mrt'
+	var token = 'NoToken'
 	var common = 'Common'
 	var wavesdistamount = 0
 	var payout
 
+	if ( toolconfigdata.token.name != "" ) { token = toolconfigdata.token.name }
 	transfers[common] = {}
 	transfers[waves] = []	//empty array where we will push waves recipients and amounts
-	transfers[mrt] = []	//empty array where we will push mrt recipients and amounts
+	transfers[token] = []	//empty array where we will push token recipients and amounts
 	transfers[common].Wavespoints = 8
 
 	paymentarray.forEach (function(asset, index) {
@@ -969,14 +972,14 @@ var masstransferobject = function (paymentarray, cb) {
 			totalwavesamount += asset.amount
 			transfers[common].Wavestotalamount = totalwavesamount
 
-		} else if ( asset.assetId && payout == 'yes' ) { //Found Mrt transaction
+		} else if ( asset.assetId && payout == 'yes' ) { //Found token transaction
 			
-			if ( !transfers[common].MrtassetId == true ) { transfers[common].MrtassetId = asset.assetId }
+			if ( !transfers[common].tokenId == true ) { transfers[common].tokenId = asset.assetId }
 
-			var mrtdata = {		"recipient" : asset.recipient,
+			var tokendata = {	"recipient" : asset.recipient,
 						"amount" : asset.amount }
 
-			transfers[mrt].push(mrtdata)
+			transfers[token].push(tokendata)
 		  }
 	})
 	cb(transfers);
