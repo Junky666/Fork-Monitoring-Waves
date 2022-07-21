@@ -17,7 +17,7 @@ import urllib.request as http
 import urllib.error
 import sys
 
-configfile = "config.json"
+configfile = "forkconfig.json"
 https = urllib3.PoolManager()
 pp = pprint.pprint
 gettimeout = 2.0 #Waiting time before declare unsuccesfull GET
@@ -40,10 +40,10 @@ with open(configfile, "r") as json_file:
     jsonconfigdata = json.load(json_file)
     ftconf = jsonconfigdata["forktoolsconfig"]
     tgconf = jsonconfigdata["telegramconfig"]
-    pconf = jsonconfigdata["paymentconfig"]
+    pconf = jsonconfigdata["thenode"]
     cn = ftconf["controlnodes"]
     auto_rollback = ftconf['auto_rollback']
-    mynode = jsonconfigdata["paymentconfig"]["querynode_api"]
+    mynode = jsonconfigdata["thenode"]["node_api"]
     max_blocks = ftconf['rollback_blocks']
     lastblock_uri = ftconf["lastblockheight"]
     blockheaders_uri = ftconf["blockheaders"]
@@ -51,7 +51,7 @@ with open(configfile, "r") as json_file:
     tg_token = tgconf['telegram_token']
     tg_chatid = tgconf['telegram_chat_id']
     tg_baseuri = tgconf['telegram_api']
-    APIkey = pconf["paymentnode_apikey"]
+    APIkey = pconf["node_apikey"]
     nodename = pconf['nodename']
 
 
@@ -64,16 +64,16 @@ def check_start_mode():
 
     global startblock
     global rollbackheight
-    
+
     a0 = sys.argv[0] #Script name
     cmd_argvs = len(sys.argv) #length of command line arguments (script itself also counted as 1)
 
     if cmd_argvs == 2: #Entered 1 command line option
 
         a1 = sys.argv[1].strip('-').lower()
-        
+
         if a1 in option_help: #Help requested
-            
+
             print()
             print(" " + progname + " - A tool that detects blockchain deviatens and forks for waves nodes\n")
             print(" usage: " + a0 + " <command options>\n")
@@ -84,9 +84,9 @@ def check_start_mode():
             print(" help              : Show the help screen")
             print(" block    [height] : Start testing from a specific block. Default it starts from lastblock -" + str(lastblockshift))
             print(" rollback [height] : Activate rollback to specified blockheight. You need the node API key for rollback\n")
-            print(" config.json options:\n")
-            print(' "paymentconfig"      :')
-            print('     "querynode_api"  : Set your node and API port here, default "http://localhost:6869"') 
+            print(" forkconfig.json options:\n")
+            print(' "thenode"      :')
+            print('     "node_api"  : Set your node and API port here, default "http://localhost:6869"')
             print()
             print(' "forktoolsconfig"    :')
             print('     "controlnodes"   : Control nodes to use, default "https://nodes.wavesplatform.com:443" : "up"')
@@ -115,13 +115,13 @@ def check_start_mode():
         a2 = sys.argv[2]
 
         if a1 == 'block': #Request forktesting on specific startblock
-            
+
             startblock = int(a2) #Set global startblock and proceed
 
         elif a1 == 'rollback': #Request rollback to specific block
-           
+
             rollbackheight = a2.strip('forked.')
-            
+
             if rollbackheight.isnumeric() == False: #Error in block number specified
                 print("\n Wrong syntax used for rollback block?")
                 print(" Try : " + a0 + " rollback <nr>, i.e. 12345\n")
@@ -132,11 +132,11 @@ def check_start_mode():
 
                 if (int(rollbackheight) + int(max_blocks)) > int(currentblock): #We are within the max blockrange for rollback
                     confirm = input(" Are you sure you want to rollback to block " + rollbackheight + " [y/n]? ")
-                
+
                     if confirm.lower() not in [ 'y', 'yes' ]:
                         print('\n Rollback cancelled, exit now.\n')
                         exit()
-                
+
                 else: #Max blocks exceeded for rollback
                     print(" Max range of " + max_blocks + " blocks exceeded for rollback.")
                     print(" Exceeded by " + str(int(currentblock) - int(max_blocks) - int(rollbackheight)) + " blocks.")
@@ -153,7 +153,7 @@ def currentdate():
 # Function that checks if a rollbackfile exists
 # A rollbackfile is created if rollback is requested
 def check_ongoing_rollback():
-    
+
     for name in glob.glob('rollback.[0-9]*'): #Found rollback file, a rollback is currently active
         rollbackfile = name
         rollbackheight = name.strip("rollback.")
@@ -168,7 +168,7 @@ def check_ongoing_rollback():
              ' \nNode : ' + nodename +\
              ' \nRollback active or stale file left behind?\n'
 
-        telegram_bot_sendtext(tt) 
+        telegram_bot_sendtext(tt)
 
         exit()
 
@@ -181,19 +181,19 @@ def check_ongoing_rollback():
 def check_forkfile(): #Check if forkfile already exists
 
     global rollbackheight
-    
+
     name = ""
     need_rollback = False
     cmd_argvs = len(sys.argv) #length of command line arguments (script itself also counted as 1)
     ffcnt = 0 #Forkfile found counter
-   
+
     if rollbackheight == -1: #No rollback requested on script start
-        
+
         for name in glob.glob('forked.[0-9]*'): #Seek for forkfiles, pick lowest block to rollback
             if ffcnt == 0:
                 forkfile = name
                 need_rollback = True
-            
+
             oldblock = int(forkfile.strip('forked.'))
             newblock = int(name.strip('forked.'))
 
@@ -204,21 +204,21 @@ def check_forkfile(): #Check if forkfile already exists
                 print(' File "' + name + '" can be deleted. Forkfile "' + forkfile + '" forked first.')
 
             ffcnt += 1 #Increase forkfile counter
-        
+
         if ffcnt != 0: #Found forkfiles
-            
+
             rollbackheight = forkfile.strip("forked.") #Strip string and keep blocknr.
             rollbackfile = "rollback." + str(rollbackheight) #File created when rollback started
             rollbackfinished = "finished." + str(rollbackheight) #File created when rollback finished
-            
+
             print('\n Found in total ' + str(ffcnt) + ' forkfiles. Selected ' + forkfile + ' as candidate.')
 
     else: #Rollback was set at script start, blockheight was already stripped to number
-        
+
         forkfile = 'forked.' + rollbackheight
         rollbackfile = "rollback." + rollbackheight
         rollbackfinished = "finished." + rollbackheight
-        
+
         if os.path.isfile(forkfile): #Forkfile found, this is correct
             need_rollback = True
 
@@ -237,14 +237,14 @@ def check_forkfile(): #Check if forkfile already exists
         if cmd_argvs > 2: #There are command line options entered, it is a request for rollback
 
             print("\n Rollback requested to blockheight " + rollbackheight + ".")
-                
+
             tt = '\nMonitoring Alert!\n' +\
                  ' -----------------\n' +\
                  ' Rollback to block "' + str(rollbackheight) + '" requested.\n' +\
                  ' node : ' + nodename + '\n'
 
             telegram_bot_sendtext(tt)
-                
+
             os.rename(forkfile, rollbackfile) #rename forkfile to rollback file
             rollback_call(mynode,rollbackheight) #Rollback blockchain
             os.rename(rollbackfile, rollbackfinished) #rename rollback file to finished file
@@ -255,9 +255,9 @@ def check_forkfile(): #Check if forkfile already exists
                  ' node : ' + nodename + '\n'
 
             telegram_bot_sendtext(tt)
-        
+
             print("\n Rollback finished!\n")
-            
+
             for name in glob.glob('forked.[0-9]*'): #Found old forkfiles, remove
                 print(' Found old forkfile, deleting : ' + name)
                 os.remove(name)
@@ -295,7 +295,7 @@ def check_forkfile(): #Check if forkfile already exists
 def get_current_block(node):
 
     getreq = https.request('GET', node + lastblock_uri) #Get current block (lastblock)
-    
+
     return json.loads(getreq.data)["height"]
 
 
@@ -361,7 +361,7 @@ def get_blocks(node):
 
     for blockheight in range(startblock, startblock-5, -1): #Take 5 blocks and query block headers
         print(" GET headers from verification block",blockheight)
-        
+
         try:
             getreq = https.request('GET', node + blockheaders_uri + str(blockheight), timeout=gettimeout)
             status = getreq.status
@@ -371,9 +371,9 @@ def get_blocks(node):
             #if node == mynode: ordered_objdict[startblock-10] = 'unique block' ####### TESTING : generates a unique block for my node
             #if node == mynode: ordered_objdict[startblock-3] = 'my node header' ####### TESTING : generates a unique header for my node
             #if node != mynode: ordered_objdict[startblock-8] = 'unique block' ####### TESTING : generates a unique block for all control node
-            #if node != mynode: ordered_objdict[startblock-3] = 'ctrl node header' ####### TESTING : generates a unique header for all control node 
-            #if node == "https://nodes.wavesplatform.com:443" : ordered_objdict[startblock-4] = 'ctrl node header' ####### TESTING : generates a unique header for 1 control node 
-        
+            #if node != mynode: ordered_objdict[startblock-3] = 'ctrl node header' ####### TESTING : generates a unique header for all control node
+            #if node == "https://nodes.wavesplatform.com:443" : ordered_objdict[startblock-4] = 'ctrl node header' ####### TESTING : generates a unique header for 1 control node
+
         except:
             print(" # Failure for block " + str(blockheight) + " #")
             failcnt += 1
@@ -403,7 +403,7 @@ def get_blocks(node):
              'Node ' + str(node) + "\n" +\
              'reachability problems.\n' +\
              'Consider marking this node "down" in ' +\
-             'config.json, if this is a control node.\n' +\
+             'forkconfig.json, if this is a control node.\n' +\
              'source node : ' + nodename + '\n'
 
         if nodealreadydown == False: #First time node discovered as down, send message
@@ -414,7 +414,7 @@ def get_blocks(node):
         filename = filename + ".down"
         if os.path.isfile(filename): #found old node unreachable file
             os.remove(filename)
-                       
+
             tt = '\nMonitoring Alert!\n' +\
                  '-----------------\n' +\
                  str(sys.argv[0]) + ' problems.\n' +\
@@ -436,7 +436,7 @@ def get_blocks(node):
 # params
 # - nodearray : The list with all control nodes { "node1" : "up", "node2" : "up" ]
 def get_controlnode_blocks(nodearray):
-    
+
     cnblocks = {} #List with all ACTIVE control nodes and their ordered dict of blockheaders
 
     for node in nodearray: #cycle through all controlnodes
@@ -447,23 +447,23 @@ def get_controlnode_blocks(nodearray):
             if len(cnblocks[node]) == 0: #Control node problems, can be down, slow, firewalled
                 cnblocks.pop(node) #Delete node from compare list
         else: print("\n Skipping control node '" + node + "', as it is not marked 'up' in config.")
-    
+
     if len(cnblocks) == 0: #No active control nodes, alert and quit
-       
+
         tt = '\nMonitoring Alert!\n' +\
              '-----------------\n' +\
              str(sys.argv[0]) + ' problems.\n' +\
              'node : ' + nodename + '\n'
-        
+
         if len(cn) == 0: #No nodes in configfile added
-            
-            tt += 'Please add control nodes to config.json.\n'
-            print('\n There are no controlnodes added to config.json. Can not compare.')
+
+            tt += 'Please add control nodes to forkconfig.json.\n'
+            print('\n There are no controlnodes added to forkconfig.json. Can not compare.')
 
         else: #all nodes in config down
 
             tt += 'No control nodes usable.\n' +\
-                  'All marked "down" in config.json.\n'
+                  'All marked "down" in forkconfig.json.\n'
 
             print('\n Seems there are no usable control nodes. All marked down. Can not compare.')
 
@@ -479,22 +479,22 @@ def get_controlnode_blocks(nodearray):
 # params
 # - mnkeys : Ordered dict of blocks/headers of my node
 # - cnkeys : List of active controlnodes with ordered dict of blocks/headers
-# - mnblocks : ordered dict with validation blocks and headers for mynode 
+# - mnblocks : ordered dict with validation blocks and headers for mynode
 def compare_keys_headers(mnkeys, cnkeys, mnblocks):
-    
+
     global oosync
     global fork
     global forkcounter
     cncount = len(cnkeys) #How many control nodes do we use
     nodekeydiff = 0 #Counter to see if key sets differ for block heights
-    
+
     for cn in cnkeys: #Loop through all active control node blocks, compare key set
 
         blockdiff = 0 #Counter to see if key sets differ for block headers
         cnk = set(cnkeys[cn].keys()) #Set of control node blockheights
 
         if cnk != mnkeys: #The blockheights deviate for this control node and my node -> OOSync
-            
+
             oosync = True #Node could be out of sync
             cnkdiffcnt = len(cnk.difference(mnkeys)) #Unique blockheights of ctrl node
             mnkdiffcnt = len(mnkeys.difference(cnk)) #Unique blockheights of my node
@@ -517,20 +517,20 @@ def compare_keys_headers(mnkeys, cnkeys, mnblocks):
             print(" Compare block headers with control node '" + cn + "'")
             print(" Current active blockheight : " + str(get_current_block(cn)))
             for blockheight in ck: #For every common block, check if headers are equal for this control node and my node
-                
+
                 if cnkeys[cn][blockheight] == mnblocks[blockheight] : #Blockheader control node match blockheader my node
                     print(" Headers of Block",str(blockheight), "are equal. Block is valid.")
-            
+
                 else: #Blockheader control node does not match with my node -> someone forked
                     print(" Warning, Headers of block", str(blockheight), "are different. Block is invalid")
-                    
+
                     fork = True #Fork detected, not sure yet which node (my node or control node)
                     blockdiff += 1 #Increase counter for every deviated block, for this control node
 
             if blockdiff != 0:
                 forkcounter += 1 #If headers deviate, a node has forked, increase global counter
                 print("\n Warning, possible fork detected! Blocks deviated : " + str(blockdiff) + "\n --")
-        
+
         print()
 
     if oosync == True: #Block numbers are not in sync
@@ -543,15 +543,15 @@ def compare_keys_headers(mnkeys, cnkeys, mnblocks):
              ' source node : ' + nodename + '\n'
 
         telegram_bot_sendtext(tt)
-    
+
 
 # Function that sends message to telegram bot
 # params
 # - botmsg : the message to send
 def telegram_bot_sendtext(botmsg):
 
-    ### CODING ACTION: add try / except to absorb errors ### 
-    try: 
+    ### CODING ACTION: add try / except to absorb errors ###
+    try:
         if tg == 'yes':
             send_text = tg_baseuri + tg_token + '/sendMessage?chat_id=' + tg_chatid + '&parse_mode=Markdown&text=' + botmsg
             response = https.request('GET', send_text)
@@ -620,10 +620,10 @@ def fork_actions():
               " It can not be determined if my node '" + mynode + "' forked or the control node.\n" +\
               " Suggestion : Add more control nodes or explore logs of your node.\n" +\
               " =========================================================================")
-    
+
         f = open(forkfile,"w+") #create forkfile with rollback blockheight
         f.close()
-        
+
         tt = '\nMonitoring Alert!\n' +\
              '-----------------\n' +\
              'Fork detected on Waves blockchain!\n' +\
@@ -633,17 +633,17 @@ def fork_actions():
              'Add more control nodes or explore\n' +\
              'logs of your node ' + str(mynode) + "'.\n" +\
              'node : ' + nodename + '\n'
-        
+
     elif acncnt > 1 and acncnt == forkcounter: #multiple control nodes and counted a fork for every node
 
         need_rollback = True
-        
+
         print(" =================================================\n" +\
               " Warning! My node '" + mynode + "' forked!!!\n" +\
               " Need Rollback to block '" + str(rollbackheight) + "'\n" +\
               " node : " + nodename + '\n' +\
               " =================================================\n")
-        
+
         f = open(forkfile,"w+") #create forkfile with rollback blockheight
         f.close()
 
@@ -673,10 +673,10 @@ def fork_actions():
     telegram_bot_sendtext(tt)
 
     if need_rollback == True and auto_rollback == 'yes': #rollback the blockchain automatically
-        
+
         rollbackfile = "rollback." + str(rollbackheight)
         rollbackfinished = "finished." + str(rollbackheight)
-        print("\n My node is on fork. Auto rollback is desired according config.json.")
+        print("\n My node is on fork. Auto rollback is desired according forkconfig.json.")
         print(" Will rollback to block '" + str(rollbackheight) + "'.")
         print(" Requesting rollback now to block '" + str(rollbackheight) + "' on node '" + mynode + "'....")
 
@@ -703,11 +703,11 @@ def fork_actions():
              ' node : ' + nodename + '\n'
 
         telegram_bot_sendtext(tt)
-        
+
         print("\n Rollback finished!\n")
 
-    elif need_rollback == True and auto_rollback =='no': #Need manual rollback 
-        
+    elif need_rollback == True and auto_rollback =='no': #Need manual rollback
+
         print(" You can automate rollback with command : '" + sys.argv[0] + " rollback " + str(rollbackheight) + "'\n")
 
 
@@ -743,7 +743,7 @@ mykeys = set(mynodeblocks.keys()) #ordered set of all blockheights of mynode
 compare_keys_headers(mykeys, controlnodeblocks, mynodeblocks) #Compare collected blockheights and headers
 
 if fork == True: #Actions to do if a fork is detected
-   
+
     fork_actions()
 
 
