@@ -407,7 +407,7 @@ def get_blocks(node):
              'source node : ' + nodename + '\n'
 
         if nodealreadydown == False: #First time node discovered as down, send message
-            telegram_bot_sendtext(tt)
+            telegram_bot_sendtext(tt, disable_notification=True)
 
     else: #No failures to get blocks from node
 
@@ -422,7 +422,7 @@ def get_blocks(node):
                  'reachable again.\n' +\
                  'source node : ' + nodename + '\n'
 
-            telegram_bot_sendtext(tt)
+            telegram_bot_sendtext(tt, disable_notification=True)
 
     return ordered_objdict
 
@@ -542,18 +542,18 @@ def compare_keys_headers(mnkeys, cnkeys, mnblocks):
              ' Nodes are Out of Sync.\n' +\
              ' source node : ' + nodename + '\n'
 
-        telegram_bot_sendtext(tt)
+        telegram_bot_sendtext(tt, disable_notification=True)
 
 
 # Function that sends message to telegram bot
 # params
 # - botmsg : the message to send
-def telegram_bot_sendtext(botmsg):
+def telegram_bot_sendtext(botmsg, disable_notification=False):
 
     ### CODING ACTION: add try / except to absorb errors ###
     try:
         if tg == 'yes':
-            send_text = tg_baseuri + tg_token + '/sendMessage?chat_id=' + tg_chatid + '&parse_mode=Markdown&text=' + botmsg
+            send_text = tg_baseuri + tg_token + '/sendMessage?chat_id=' + tg_chatid + '&parse_mode=Markdown&text=' + botmsg + '&disable_notification=' + str(disable_notification)
             response = https.request('GET', send_text)
             print(' Telegram message send.')
         else:
