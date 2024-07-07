@@ -613,6 +613,9 @@ def fork_actions():
     forkfile = "forked." + str(rollbackheight)
     hoursleft = round((int(max_blocks) / 60), 2) #How many hours in which rollback should occur
 
+    tt = ""
+    tt_oth = ""
+
     if acncnt == 1: #Only 1 active control node, not clear who forked
         print(" =========================================================================\n" +\
               " Warning! Detected a fork!\n" +\
@@ -662,7 +665,7 @@ def fork_actions():
               " node : " + nodename + '\n' +\
               " ====================================================\n" )
 
-        tt = '\nMonitoring Alert!\n' +\
+        tt_oth = '\nMonitoring Alert!\n' +\
              ' -----------------\n' +\
              'Detected "' + str(forkcounter) + '" forked nodes!\n' +\
              'However, there are "' + str(acncnt) + '" active control nodes.\n' +\
@@ -670,7 +673,10 @@ def fork_actions():
              'rollback block : ' + str(rollbackheight) + '\n' +\
              'source node : ' + nodename + '\n'
 
-    telegram_bot_sendtext(tt)
+    if tt:
+        telegram_bot_sendtext(tt)
+    if tt_oth:
+        telegram_bot_sendtext(tt_oth, disable_notification=True)
 
     if need_rollback == True and auto_rollback == 'yes': #rollback the blockchain automatically
 
